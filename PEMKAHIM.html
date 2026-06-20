@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Voting Fresh & Modern | HIMA TI</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================================
+           PALET WARNA & TEMA FRESH MODERN
+           ============================================================ */
+        :root {
+            --bg-body: #f0fdfa;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #0ea5e9;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+            --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05);
+            --shadow-lg: 0 20px 40px -15px rgba(15, 23, 42, 0.1);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.25s ease; }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(79, 70, 229, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center; /* Rata tengah vertikal di desktop */
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        /* Container & Cards */
+        .app-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.8);
+            position: relative;
+        }
+
+        .card::before {
+            content: "";
+            display: block;
+            height: 6px;
+            width: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary), var(--accent));
+        }
+
+        .card-body { padding: 40px; }
+        .text-center { text-align: center; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-4 { margin-bottom: 20px; }
+        .mt-4 { margin-top: 20px; }
+
+        h1, h2, h3 { font-weight: 800; letter-spacing: -0.5px; }
+        .subtitle { color: var(--text-muted); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Slide System */
+        .slide { display: none; opacity: 0; transform: translateY(15px); }
+        .slide.active { display: block; opacity: 1; transform: translateY(0); animation: fadeUp 0.5s ease forwards; }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Form Elements */
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            font-family: var(--font-main);
+            font-size: 1rem;
+            color: var(--text-main);
+            background: #f8fafc;
+        }
+        .form-control:focus { outline: none; border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+        .token-input { font-size: 1.5rem; text-align: center; letter-spacing: 3px; font-weight: 700; text-transform: uppercase; }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 100%; padding: 14px 24px;
+            border: none; border-radius: var(--radius-md);
+            font-family: var(--font-main); font-size: 1rem; font-weight: 700;
+            cursor: pointer; gap: 8px;
+        }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3); }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .btn-primary:disabled { background: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
+        
+        .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); background: #f8fafc; }
+
+        /* Paslon Grid & Cards */
+        .kandidat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 30px;
+        }
+        .kandidat-card {
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            background: #fff;
+            position: relative;
+            display: flex; flex-direction: column;
+        }
+        .kandidat-card:hover { border-color: var(--secondary); box-shadow: var(--shadow-sm); transform: translateY(-3px); }
+        
+        .nomor-urut {
+            position: absolute; top: -15px; left: -15px;
+            width: 45px; height: 45px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; font-weight: 800;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .foto-preview {
+            width: 140px; height: 140px;
+            border-radius: 50%; object-fit: cover;
+            margin: 0 auto 20px;
+            border: 4px solid var(--bg-body);
+            box-shadow: 0 0 0 2px var(--border);
+            background: var(--border);
+        }
+
+        .visi-misi-box {
+            background: var(--bg-body);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            flex-grow: 1;
+            max-height: 180px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+        .visi-misi-box h4 { color: var(--text-main); margin-bottom: 5px; font-size: 0.9rem; }
+
+        /* Success State */
+        .success-icon {
+            width: 80px; height: 80px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; margin: 0 auto 20px;
+        }
+
+        /* ============================================================
+           PENGATURAN RESPONSIVE UNTUK HP (MOBILE FRIENDLY)
+           ============================================================ */
+        @media (max-width: 768px) {
+            body {
+                align-items: flex-start; /* Mencegah konten terpotong di atas saat discroll di HP */
+                padding: 15px 10px;
+            }
+            .card-body { 
+                padding: 25px 15px; /* Kurangi padding dalam kartu agar layar lebih lega */
+            }
+            .kandidat-grid { 
+                grid-template-columns: 1fr; /* Buat paslon atas-bawah */
+                gap: 20px; 
+                margin-top: 20px;
+            }
+            h1 { font-size: 1.5rem !important; }
+            h2 { font-size: 1.25rem !important; }
+            h3 { font-size: 1.1rem !important; }
+            p.subtitle { font-size: 0.8rem; }
+            
+            .token-input {
+                font-size: 1.2rem;
+                letter-spacing: 2px;
+                padding: 12px;
+            }
+            .visi-misi-box {
+                max-height: 250px; /* Perbesar sedikit di HP agar tidak terlalu sempit saat discroll */
+            }
+            .kandidat-card {
+                padding: 20px 15px; /* Lebarkan area kartu kandidat di layar kecil */
+            }
+            .foto-preview {
+                width: 120px; 
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="card">
+            <div class="card-body">
+                
+                <!-- HEADER -->
+                <div class="text-center mb-4" id="main-header">
+                    <p class="subtitle">Himpunan Mahasiswa Teknik Informatika</p>
+                    <h1 style="color: var(--primary); font-size: 1.8rem; margin-top: 5px;">E-Voting Pemilu HIMA</h1>
+                </div>
+
+                <!-- ================= SLIDE 1: INPUT TOKEN ================= -->
+                <div class="slide active" id="slide-token">
+                    <p class="text-center text-muted mb-4">Silakan masukkan token akses Anda untuk melanjutkan ke bilik suara elektronik.</p>
+                    <div class="form-group">
+                        <input type="text" id="token-input" class="form-control token-input" placeholder="XXXX-XXXX" autocomplete="off">
+                    </div>
+                    <button class="btn btn-primary mt-4" id="btn-cek-token" onclick="validateToken()">VALIDASI TOKEN</button>
+                </div>
+
+                <!-- ================= SLIDE 2: VOTING & VISI MISI ================= -->
+                <div class="slide" id="slide-voting">
+                    <div class="text-center mb-4">
+                        <h2>Kenali Paslon & Tentukan Pilihanmu</h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Baca visi misi mereka dengan saksama, lalu klik Pilih pada paslon jagoan Anda.</p>
+                    </div>
+
+                    <div class="kandidat-grid">
+                        
+                        <!-- PASLON 1 -->
+                        <div class="kandidat-card">
+                            <div class="nomor-urut">1</div>
+                            <img src="img/2.png" alt="Foto Paslon 1" class="foto-preview">
+                            <div class="text-center mb-4">
+                                <h3 style="color: var(--primary);">KEMAL AHMAD RABBANI</h3>
+                                <p style="color: var(--text-muted); font-weight: 600; font-size: 0.9rem;">MOCHAMMAD JAELANI SHIDDIQ</p>
+                            </div>
+                            <div class="visi-misi-box">
+                                <h4>Visi & Misi:</h4>
+                                <p style="line-height: 1.5;">
+                                    "Mewujudkan HMIF sebagai organisasi yang nyaman, aktif, dan bermakna dalam mengembangkan potensi serta kebersamaan anggotanya."<br><br>
+                                    1. Membangun budaya organisasi yang terbuka dan nyaman.<br>
+                                    2. Meningkatkan partisipasi serta rasa memiliki anggota.<br>
+                                    3. Menyelenggarakan program yang bermanfaat bagi pengembangan anggota.<br>
+                                    4. Memperkuat komunikasi dan tanggung jawab pengurus.<br>
+                                </p>
+                            </div>
+                            <button class="btn btn-outline" onclick="confirmVote(1)">🗳️ PILIH PASLON 1</button>
+                        </div>
+
+                        <!-- PASLON 2 -->
+                        <div class="kandidat-card">
+                            <div class="nomor-urut">2</div>
+                            <img src="img/1.png" alt="Foto Paslon 2" class="foto-preview">
+                            <div class="text-center mb-4">
+                                <h3 style="color: var(--primary);">MOCH RANDRA PRAMUDYA</h3>
+                                <p style="color: var(--text-muted); font-weight: 600; font-size: 0.9rem;">Muthi'i Khairunnisaa</p>
+                            </div>
+                            <div class="visi-misi-box">
+                                <h4>Visi & Misi:</h4>
+                                <p style="line-height: 1.5;">
+                                    "Menjadikan HMIF sebagai organisasi yang Responsif, Inovatif, dan Kontributif dalam mengembangkan potensi mahasiswa yang Berdaya Saing Global berlandaskan asas Solidaritas dan Profesionalisme."<br><br>
+                                    1. Membuka ruang komunikasi yang jujur dan terbuka untuk mendengar, mengawal, dan memperjuangkan hak serta kesejahteraan seluruh mahasiswa Informatika.<br>
+                                    2. Membantu mahasiswa mengasah minat dan keahlian IT mereka lewat kelompok belajar (learning circle) dan program kerja yang sesuai dengan kebutuhan dunia kerja saat ini.<br>
+                                    3. Menyelenggarakan aksi sosial dan kegiatan kemanusiaan secara nyata sebagai wujud kepedulian dan kontribusi positif mahasiswa bagi masyarakat sekitar.<br>
+                                    4. Menjalankan roda organisasi yang transparan, jujur, dan disiplin demi menciptakan lingkungan kerja himpunan yang profesional sekaligus nyaman (harmonis).<br>
+                                </p>
+                            </div>
+                            <button class="btn btn-outline" onclick="confirmVote(2)">🗳️ PILIH PASLON 2</button>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <!-- ================= SLIDE 3: SUKSES ================= -->
+                <div class="slide" id="slide-success">
+                    <div class="text-center" style="padding: 40px 0;">
+                        <div class="success-icon">✓</div>
+                        <h2 style="color: var(--text-main); margin-bottom: 10px;">Suara Anda Berhasil Disimpan!</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 30px;">Terima kasih telah menggunakan hak suara Anda untuk masa depan HIMA TI yang lebih cerah.</p>
+                        <button class="btn btn-outline" style="width: auto;" onclick="location.reload()">KEMBALI KE HALAMAN AWAL</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ============================================================
+           KONFIGURASI DATABASE
+           ============================================================ */
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxxcx-mQ09v27_EMcYAorPtGDPhamTJcA8__wpVw8MDVi90a1V8H68ew4hJrEXNAGg/exec";
+        let currentToken = "";
+
+        /* ============================================================
+           FUNGSI ANTARMUKA (UI) & NAVIGASI
+           ============================================================ */
+        function goToSlide(id) {
+            document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Otomatis scroll ke atas saat pindah slide
+        }
+
+        function showHeader(show) {
+            document.getElementById('main-header').style.display = show ? 'block' : 'none';
+        }
+
+        /* ============================================================
+           LOGIKA PEMILIHAN (VOTING) & INTEGRASI GAS
+           ============================================================ */
+        async function validateToken() {
+            const input = document.getElementById('token-input').value.trim().toUpperCase();
+            const btn = document.getElementById('btn-cek-token');
+            
+            if(!input) return alert("Silakan masukkan token!");
+
+            btn.innerText = "Memeriksa..."; btn.disabled = true;
+
+            try {
+                const res = await fetch(`${GAS_URL}?action=check&token=${encodeURIComponent(input)}`);
+                if(!res.ok) throw new Error();
+                const hasil = await res.json();
+
+                if(hasil.status === 'valid') {
+                    currentToken = input;
+                    goToSlide('slide-voting');
+                } else if(hasil.status === 'used') {
+                    alert("Maaf, token ini sudah digunakan untuk memilih.");
+                } else {
+                    alert("Token tidak ditemukan. Cek kembali pengetikan Anda.");
+                }
+            } catch(err) {
+                alert("Gagal terhubung ke database. Periksa koneksi internet Anda.");
+            } finally {
+                btn.innerText = "VALIDASI TOKEN"; btn.disabled = false;
+            }
+        }
+
+        async function confirmVote(paslonNum) {
+            // Tentukan nama ketua manual untuk dikirim ke database
+            let namaKetua = "";
+            if (paslonNum === 1) namaKetua = "KEMAL AHMAD RABBANI";
+            if (paslonNum === 2) namaKetua = "MOCH RANDRA PRAMUDYA";
+            
+            const pilihanData = `Paslon ${paslonNum} - ${namaKetua}`;
+
+            if(confirm(`YAKIN PILIH PASLON ${paslonNum}?\n\nPilihan Anda bersifat rahasia dan tidak dapat diubah setelah dikirim.`)) {
+                
+                const btns = document.querySelectorAll('#slide-voting .btn-outline');
+                btns.forEach(b => { b.innerText = "MENGIRIM..."; b.disabled = true; });
+
+                try {
+                    const res = await fetch(GAS_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            action: 'vote',
+                            token: currentToken,
+                            pilihan: pilihanData,
+                            timestamp: new Date().toISOString()
+                        })
+                    });
+                    
+                    const hasil = await res.json();
+                    if(hasil.status === 'success') {
+                        goToSlide('slide-success');
+                        showHeader(false);
+                    } else {
+                        alert("Terjadi kesalahan atau Token sudah kedaluwarsa.");
+                        goToSlide('slide-token');
+                    }
+                } catch(err) {
+                    alert("Gagal mengirim suara. Pastikan Anda sedang online.");
+                } finally {
+                    btns[0].innerText = "🗳️ PILIH PASLON 1"; btns[0].disabled = false;
+                    btns[1].innerText = "🗳️ PILIH PASLON 2"; btns[1].disabled = false;
+                }
+            }
+        }
+
+        // Listener tombol enter untuk input token
+        document.getElementById('token-input').addEventListener('keypress', e => { 
+            if (e.key === 'Enter') validateToken(); 
+        });
+
+    </script>
+</body>
+</html>
